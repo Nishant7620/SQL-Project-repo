@@ -1,0 +1,467 @@
+online banking system Database
+
+1) Create database:
+
+MariaDB [(none)]> CREATE DATABASE bank;
+Query OK, 1 row affected (0.00 sec)
+
+2) Use database:
+
+MariaDB [(none)]> USE bank
+Database changed
+
+3) Creating table "branch":
+
+MariaDB [bank]>  CREATE TABLE branch (branch_id INT PRIMARY KEY,branch_name VARCHAR(30) NOT NULL,city CHAR(30));
+Query OK, 0 rows affected (0.03 sec)
+
+MariaDB [bank]> DESC branch;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| branch_id   | int(11)     | NO   | PRI | NULL    |       |
+| branch_name | varchar(30) | NO   |     | NULL    |       |
+| city        | char(30)    | YES  |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+3 rows in set (0.02 sec)
+
+4) Creating table "customers":
+
+MariaDB [bank]>  CREATE TABLE customers (customer_id INT PRIMARY KEY,
+    -> first_name VARCHAR(30) NOT NULL,last_name VARCHAR(30) NOT NULL,
+    -> city CHAR(30) NOT NULL,mobile_no INT NOT NULL,
+    -> occupation VARCHAR(30) NOT NULL);
+Query OK, 0 rows affected (0.03 sec)
+
+MariaDB [bank]> DESC customers;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| customer_id | int(11)     | NO   | PRI | NULL    |       |
+| first_name  | varchar(30) | NO   |     | NULL    |       |
+| last_name   | varchar(30) | NO   |     | NULL    |       |
+| city        | char(30)    | NO   |     | NULL    |       |
+| mobile_no   | int(11)     | NO   |     | NULL    |       |
+| occupation  | varchar(30) | NO   |     | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+6 rows in set (0.01 sec)
+
+5) Creating table "account" with FOEIGN KEY:
+
+MariaDB [bank]>  CREATE TABLE account (account_id INT PRIMARY KEY,account_number INT UNIQUE,ac_type CHAR(10) NOT NULL,
+    -> balance DECIMAL (20,2),
+    -> customer_id INT,
+    -> CONSTRAINT cust
+    -> FOREIGN KEY (customer_id) REFERENCES customers (customer_id),
+    -> branch_id INT,
+    -> CONSTRAINT bran
+    ->   FOREIGN KEY (branch_id) REFERENCES branch (branch_id)
+    ->  on delete CASCADE
+    -> on update CASCADE);
+Query OK, 0 rows affected (0.02 sec)
+
+MariaDB [bank]> DESC account;
++----------------+---------------+------+-----+---------+-------+
+| Field          | Type          | Null | Key | Default | Extra |
++----------------+---------------+------+-----+---------+-------+
+| account_id     | int(11)       | NO   | PRI | NULL    |       |
+| account_number | int(11)       | YES  | UNI | NULL    |       |
+| ac_type        | char(10)      | NO   |     | NULL    |       |
+| balance        | decimal(20,2) | YES  |     | NULL    |       |
+| customer_id    | int(11)       | YES  | MUL | NULL    |       |
+| branch_id      | int(11)       | YES  | MUL | NULL    |       |
++----------------+---------------+------+-----+---------+-------+
+6 rows in set (0.01 sec)
+
+6) Creating table "transactions" with FOREIGN KEY:
+
+MariaDB [bank]>  CREATE TABLE transactions (transaction_id INT primary key,
+    -> account_id INT,
+    -> CONSTRAINT trans
+    -> Foreign key (account_id) REFERENCES account (account_id),
+    ->  transaction_date DATE NOT NULL,
+    -> transaction_type CHAR(15) NOT NULL,
+    -> amount DECIMAL (20,2) NOT NULL);
+Query OK, 0 rows affected (0.02 sec)
+
+MariaDB [bank]> DESC transactions;
++------------------+---------------+------+-----+---------+-------+
+| Field            | Type          | Null | Key | Default | Extra |
++------------------+---------------+------+-----+---------+-------+
+| transaction_id   | int(11)       | NO   | PRI | NULL    |       |
+| account_id       | int(11)       | YES  | MUL | NULL    |       |
+| transaction_date | date          | NO   |     | NULL    |       |
+| transaction_type | char(15)      | NO   |     | NULL    |       |
+| amount           | decimal(20,2) | NO   |     | NULL    |       |
++------------------+---------------+------+-----+---------+-------+
+5 rows in set (0.01 sec)
+
+-------------------INSERTING RECORD----------------------------------
+
+7)Populating table "branch":
+
+MariaDB [bank]> INSERT INTO branch VALUES(321,'Asaf ali road','Delhi'),
+    -> (421,'New delhi main branch','Delhi'),
+    -> (521,'Delhi cantt','Delhi'),
+    -> (621,'Jasola','Delhi'),
+    -> (721,'Mahim','Mumbai'),
+    -> (821,'Vile parle','Mumbai'),
+    -> (921,'Mandvi','Mumbai'),
+    -> (1021,'Jadavpur','Kolkata'),
+    -> (1121,'Kodambakkam','Chennai'),
+    -> (1221,'Khandeshwar','NaviMumbai');
+Query OK, 10 rows affected (0.01 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+8) Populating table "customers":
+
+MariaDB [bank]> INSERT INTO customers VALUES(1101,'Ramesh','Sharma','Delhi','954319834','Service');
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO customers VALUES(1102,'Avinash','Minha','Delhi','987653210','Service');
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO customers VALUES(1103,'Rahul','Rastogi','Delhi','976517890','Student');
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO customers VALUES(1104,'Parul','Gandhi','Delhi','987653210','Housewife');
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO customers VALUES(1105,'Naveen','Aedekar','Mumbai','897652319','Service');
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO customers VALUES(1106,'Chitresh','Barwe','Mumbai','765129832','Student');
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO customers VALUES(1107,'Amit','Borkar','Mumbai','987518976','Student');
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO customers VALUES(1108,'Nisha','Damle','Mumbai','795419876','Service');
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO customers VALUES(1109,'Abhishek','Dutta','Kolkata','985619876','Service');
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO customers  VALUES(1110,'Shankar','Nair','Chennai','876548907','Service');
+Query OK, 1 row affected (0.00 sec)
+
+9)Populating table "account":
+
+MariaDB [bank]> INSERT INTO account VALUES(001,123456790,'savings',1000.00,1101,321);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO account VALUES(002,987653210,'checking',2000.00,1102,321);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO account VALUES(003,246835790,'savings',1500.00,1103,421);
+Query OK, 1 row affected (0.01 sec)
+
+MariaDB [bank]> INSERT INTO account VALUES(004,135724680,'checking',3000.00,1104,721);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO account VALUES(005,555555555,'savings',500.00,1105,821);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO account VALUES(006,999999999,'savings',2500.00,1106,921);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO account VALUES(007,444444444,'checking',1800.00,1107,321);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO account VALUES(008,888888888,'savings',3500.00,1108,521);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO account VALUES(009,222222222,'checking',2000.00,1109,921);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO account VALUES(010,777777777,'checking',4000.00,1110,421);
+Query OK, 1 row affected (0.00 sec)
+
+10)Populating table "transactions":
+
+MariaDB [bank]> INSERT INTO transactions VALUES(421,1,'2013-01-01','Deposit',2000.00);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO transactions VALUES(422,1,'2013-02-01','Withdrawal',1000.00);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO transactions VALUES(423,2,'2013-01-01','Deposit',2000.00);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO transactions VALUES(424,2,'2013-02-01','Deposit',3000.00);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO transactions VALUES(425,7,'2013-01-11','Deposit',7000.00);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO transactions VALUES(426,7,'2013-01-13','Deposit',9000.00);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO transactions VALUES(427,1,'2013-03-13','Deposit',4000.00);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO transactions VALUES(428,1,'2013-03-14','Deposit',3000.00);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO transactions VALUES(429,1,'2013-03-21','Withdrawal',9000.00);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO transactions VALUES(430,1,'2013-03-22','Withdrawal',2000.00);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO transactions VALUES(431,2,'2013-03-25','Withdrawal',7000.00);
+Query OK, 1 row affected (0.00 sec)
+
+MariaDB [bank]> INSERT INTO transactions VALUES(432,7,'2013-03-26','Withdrawal',2000.00);
+Query OK, 1 row affected (0.00 sec)
+
+---------------------PERFORMING QUERIES------------------------------------
+
+11) Write a query to change tha column name:(CHANGING COLUMN NAME)
+
+MariaDB [bank]> ALTER TABLE account
+    -> CHANGE COLUMN account_number
+    -> account_no INT;
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+MariaDB [bank]> DESC account;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| account_id  | int(11)       | NO   | PRI | NULL    |       |
+| account_no  | int(11)       | YES  | UNI | NULL    |       |
+| ac_type     | char(10)      | NO   |     | NULL    |       |
+| balance     | decimal(20,2) | YES  |     | NULL    |       |
+| customer_id | int(11)       | YES  | MUL | NULL    |       |
+| branch_id   | int(11)       | YES  | MUL | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+6 rows in set (0.01 sec) 
+
+12) Write a query to update record:(UPDATE FUNCTION)
+
+MariaDB [bank]> UPDATE customers
+    -> SET first_name= "Manish"
+    -> WHERE customer_id= 1101;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+Output:
+
+MariaDB [bank]> SELECT * FROM customers
+    -> WHERE customer_id=1101;
++-------------+------------+-----------+-------+-----------+------------+
+| customer_id | first_name | last_name | city  | mobile_no | occupation |
++-------------+------------+-----------+-------+-----------+------------+
+|        1101 | Manish     | Sharma    | Delhi | 954319834 | Service    |
++-------------+------------+-----------+-------+-----------+------------+
+1 row in set (0.00 sec)
+
+13) Write a query to display customer details that are live in Mumbai and chennai:(IN FUNCTION)
+
+MariaDB [bank]> SELECT * FROM customers
+    -> WHERE city
+    -> IN ("Mumbai","Chennai");
+
++-------------+------------+-----------+---------+-----------+------------+
+| customer_id | first_name | last_name | city    | mobile_no | occupation |
++-------------+------------+-----------+---------+-----------+------------+
+|        1105 | Naveen     | Aedekar   | Mumbai  | 897652319 | Service    |
+|        1106 | Chitresh   | Barwe     | Mumbai  | 765129832 | Student    |
+|        1107 | Amit       | Borkar    | Mumbai  | 987518976 | Student    |
+|        1108 | Nisha      | Damle     | Mumbai  | 795419876 | Service    |
+|        1110 | Shankar    | Nair      | Chennai | 876548907 | Service    |
++-------------+------------+-----------+---------+-----------+------------+
+5 rows in set (0.01 sec)
+
+14) Write a query to display customer_id name whose balance is between 1000 and 2000:(BETWEEN FUCNTION)
+
+MariaDB [bank]> SELECT customer_id FROM account
+    -> WHERE
+    -> balance BETWEEN 1000 AND 2000;
++-------------+
+| customer_id |
++-------------+
+|        1101 |
+|        1102 |
+|        1103 |
+|        1107 |
+|        1109 |
++-------------+
+5 rows in set (0.00 sec)
+
+15) Display customer whoese name start with letter N:(LIKE FUNCTION)
+
+MariaDB [bank]> SELECT first_name FROM customers
+    -> WHERE first_name
+    -> LIKE "N%";
++------------+
+| first_name |
++------------+
+| Naveen     |
+| Nisha      |
++------------+
+2 rows in set (0.00 sec)
+
+16) Write a query to display account_no whose customer_id is 1106 and account_id is 6 or branch_id is 421:(AND & OR CONDITION)
+MariaDB [bank]> SELECT account_no FROM account
+    -> WHERE customer_id =1106
+    -> AND (account_id=6 OR branch_id=421);
++------------+
+| account_no |
++------------+
+|  999999999 |
++------------+
+1 row in set (0.00 sec)
+MariaDB [bank]> SELECT * FROM account;
++------------+------------+----------+---------+-------------+-----------+
+| account_id | account_no | ac_type  | balance | customer_id | branch_id |
++------------+------------+----------+---------+-------------+-----------+
+|          1 |  123456790 | savings  | 1000.00 |        1101 |       321 |
+|          2 |  987653210 | checking | 2000.00 |        1102 |       321 |
+|          3 |  246835790 | savings  | 1500.00 |        1103 |       421 |
+|          4 |  135724680 | checking | 3000.00 |        1104 |       721 |
+|          5 |  555555555 | savings  |  500.00 |        1105 |       821 |
+|          6 |  999999999 | savings  | 2500.00 |        1106 |       921 |
+|          7 |  444444444 | checking | 1800.00 |        1107 |       321 |
+|          8 |  888888888 | savings  | 3500.00 |        1108 |       521 |
+|          9 |  222222222 | checking | 2000.00 |        1109 |       921 |
+|         10 |  777777777 | checking | 4000.00 |        1110 |       421 |
++------------+------------+----------+---------+-------------+-----------+
+10 rows in set (0.00 sec)
+
+17) Display customers details in ascending order: (ORDER BY)
+
+MariaDB [bank]> SELECT * FROM customers
+    -> ORDER BY
+    -> customer_id ASC;
++-------------+------------+-----------+---------+-----------+------------+
+| customer_id | first_name | last_name | city    | mobile_no | occupation |
++-------------+------------+-----------+---------+-----------+------------+
+|        1101 | Manish     | Sharma    | Delhi   | 954319834 | Service    |
+|        1102 | Avinash    | Minha     | Delhi   | 987653210 | Service    |
+|        1103 | Rahul      | Rastogi   | Delhi   | 976517890 | Student    |
+|        1104 | Parul      | Gandhi    | Delhi   | 987653210 | Housewife  |
+|        1105 | Naveen     | Aedekar   | Mumbai  | 897652319 | Service    |
+|        1106 | Chitresh   | Barwe     | Mumbai  | 765129832 | Student    |
+|        1107 | Amit       | Borkar    | Mumbai  | 987518976 | Student    |
+|        1108 | Nisha      | Damle     | Mumbai  | 795419876 | Service    |
+|        1109 | Abhishek   | Dutta     | Kolkata | 985619876 | Service    |
+|        1110 | Shankar    | Nair      | Chennai | 876548907 | Service    |
++-------------+------------+-----------+---------+-----------+------------+
+10 rows in set (0.00 sec)
+
+18) Display customer details where customer_id start from 1103 to 1108:(LIMIT FUNCTION)
+
+MariaDB [bank]> SELECT * FROM customers
+    -> WHERE customer_id
+    -> LIMIT 2,6;
++-------------+------------+-----------+--------+-----------+------------+
+| customer_id | first_name | last_name | city   | mobile_no | occupation |
++-------------+------------+-----------+--------+-----------+------------+
+|        1103 | Rahul      | Rastogi   | Delhi  | 976517890 | Student    |
+|        1104 | Parul      | Gandhi    | Delhi  | 987653210 | Housewife  |
+|        1105 | Naveen     | Aedekar   | Mumbai | 897652319 | Service    |
+|        1106 | Chitresh   | Barwe     | Mumbai | 765129832 | Student    |
+|        1107 | Amit       | Borkar    | Mumbai | 987518976 | Student    |
+|        1108 | Nisha      | Damle     | Mumbai | 795419876 | Service    |
++-------------+------------+-----------+--------+-----------+------------+
+6 rows in set (0.00 sec)
+
+
+19)Left join:
+
+MariaDB [bank]> SELECT a.customer_id,t.transaction_date FROM account a
+    -> LEFT JOIN transactions t
+    -> ON a.account_id=t.account_id;
++-------------+------------------+
+| customer_id | transaction_date |
++-------------+------------------+
+|        1101 | 2013-01-01       |
+|        1101 | 2013-02-01       |
+|        1101 | 2013-03-13       |
+|        1101 | 2013-03-14       |
+|        1101 | 2013-03-21       |
+|        1101 | 2013-03-22       |
+|        1102 | 2013-01-01       |
+|        1102 | 2013-02-01       |
+|        1102 | 2013-03-25       |
+|        1103 | NULL             |
+|        1104 | NULL             |
+|        1105 | NULL             |
+|        1106 | NULL             |
+|        1107 | 2013-01-11       |
+|        1107 | 2013-01-13       |
+|        1107 | 2013-03-26       |
+|        1108 | NULL             |
+|        1109 | NULL             |
+|        1110 | NULL             |
++-------------+------------------+
+19 rows in set (0.00 sec)
+
+
+20) Natural join:
+
+MariaDB [bank]> SELECT c.first_name,a.account_no FROM customers c
+    -> NATURAL JOIN account a;
++------------+------------+
+| first_name | account_no |
++------------+------------+
+| Manish     |  123456790 |
+| Avinash    |  987653210 |
+| Rahul      |  246835790 |
+| Parul      |  135724680 |
+| Naveen     |  555555555 |
+| Chitresh   |  999999999 |
+| Amit       |  444444444 |
+| Nisha      |  888888888 |
+| Abhishek   |  222222222 |
+| Shankar    |  777777777 |
++------------+------------+
+10 rows in set (0.00 sec)
+
+
+21) sub quries:
+
+MariaDB [bank]> SELECT customer_id,max(balance) FROM account
+    -> WHERE customer_id
+    -> IN (SELECT customer_id FROM customers);
++-------------+--------------+
+| customer_id | max(balance) |
++-------------+--------------+
+|        1101 |      4000.00 |
++-------------+--------------+
+1 row in set (0.00 sec)
+
+MariaDB [bank]> SELECT branch_name FROM branch WHERE branch_id
+    -> IN (SELECT branch_id FROM account
+    -> WHERE customer_id=1102);
++---------------+
+| branch_name   |
++---------------+
+| Asaf ali road |
++---------------+
+1 row in set (0.00 sec)
+
+MariaDB [bank]> SELECT * FROM branch WHERE branch_id
+    -> IN (SELECT branch_id FROM account
+    -> WHERE customer_id=1102);
++-----------+---------------+-------+
+| branch_id | branch_name   | city  |
++-----------+---------------+-------+
+|       321 | Asaf ali road | Delhi |
++-----------+---------------+-------+
+1 row in set (0.00 sec)
+
+
+
+
+
+
+
+
+ 
+ 
+
+
+
